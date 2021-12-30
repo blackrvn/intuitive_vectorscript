@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: intuitive-vectorscript
+Version: 0.0.1
+Summary: A collection of useful python scripts, functions and classes for Vectorworks
+Home-page: https://github.com/blackrvn/intuitive_vectorscript
+Author: Lukas Benjamin Tobler
+Author-email: lukasbtobler@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# vectorpy
+A collection of useful python scripts, functions and classes for vectorworks
+
+
