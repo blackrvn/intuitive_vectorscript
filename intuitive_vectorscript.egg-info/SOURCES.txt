@@ -1,0 +1,9 @@
+README.md
+setup.py
+intuitive_vectorscript/__init__.py
+intuitive_vectorscript/dialog.py
+intuitive_vectorscript/test.py
+intuitive_vectorscript.egg-info/PKG-INFO
+intuitive_vectorscript.egg-info/SOURCES.txt
+intuitive_vectorscript.egg-info/dependency_links.txt
+intuitive_vectorscript.egg-info/top_level.txt
