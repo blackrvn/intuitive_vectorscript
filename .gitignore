@@ -1,6 +1,0 @@
-.git/
-.idea/
-build/
-dist/
-intuitive_vectorscript.egg-info/
-*.gitignore
