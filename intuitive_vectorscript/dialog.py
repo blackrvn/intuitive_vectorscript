@@ -1,3 +1,4 @@
+import intuitive_vectorscript as ivs
 import vs
 
 
@@ -8,7 +9,6 @@ class Dialog:
 				 button_name_cancel="Cancel"):
 
 		self.control_ids = {}  # Container for the control IDS of the items in format 'control_ID = instance'
-		self.items_which_need_activation = []
 		self.item_base_id = 30  # Item counter for control IDs
 
 		self.dialog_title = dialog_title
@@ -17,13 +17,12 @@ class Dialog:
 
 	def dialog_event_handler(self, item, data):
 		if item == self.setup_dialog_c:
-			if len(self.items_which_need_activation) > 0:
-				for instance in self.items_which_need_activation:
-					instance.run_choices()
+			for instance in self.control_ids.values():
+				instance.activation()
 
 	def reset_choice_sample(self):
-		for value in self.control_ids.values():
-			self.control_ids[0] = value
+		for key in self.control_ids.keys():
+			self.control_ids[0] = self.control_ids.pop(key)
 
 	def create_layout(self, resizeable, has_help, btn_1, btn_2):
 		if resizeable:
@@ -32,17 +31,34 @@ class Dialog:
 			dialog = vs.CreateLayout(self.dialog_title, has_help, btn_1, btn_2)
 		return dialog
 
-	def create_item(self, index: int, item_type: str, is_group: bool = False, chars: int = 24,
-					has_listener: bool = True):
+	def create_item(self, index: int, item_type: str, chars: int = 24, has_listener: bool = True):
+
+		def instantiate_item(item_class):
+			item = item_class(self, self.item_base_id + index, item_type, chars)
+			self.control_ids[item.item_id] = item
+			return item
+
 		if item_type == "TextField":
-			item = TextField(self, self.item_base_id + index, item_type, is_group, chars)
-			self.control_ids[item.item_id] = item
-			return item
-		elif item_type == "PullDownMenu":
-			item = PullDownMenu(self, self.item_base_id + index, item_type, is_group, chars)
-			self.control_ids[item.item_id] = item
-			self.items_which_need_activation.append(item)
-			return item
+			item_inst = instantiate_item(ivs.TextField)
+			return item_inst
+		elif item_type == "IntegerField":
+			item_inst = instantiate_item(ivs.IntegerField)
+			return item_inst
+		elif item_type == "PDMenu":
+			item_inst = instantiate_item(ivs.PDMenu)
+			return item_inst
+		elif item_type == "EnhancedPDMenu":
+			item_inst = instantiate_item(ivs.EnhancedPDMenu)
+			return item_inst
+		elif item_type == "ClassPDMenu":
+			item_inst = instantiate_item(ivs.ClassPDMenu)
+			return item_inst
+		elif item_type == "LayerPDMenu":
+			item_inst = instantiate_item(ivs.LayerPDMenu)
+			return item_inst
+		elif item_type == "SheetLayerPDMenu":
+			item_inst = instantiate_item(ivs.SheetLayerPDMenu)
+			return item_inst
 
 	def set_dialog_order(self):
 		vs.SetFirstLayoutItem(self.dialog_id, self.item_base_id)
@@ -52,58 +68,7 @@ class Dialog:
 	def create_my_dialog(self):
 		for instance in self.control_ids.values():
 			instance.run()
+			instance.set_alignment()
 		self.set_dialog_order()
 		if vs.RunLayoutDialog(self.dialog_id, self.dialog_event_handler) == 1:
 			pass
-
-
-class Item:
-	def __init__(self, dialog: Dialog, item_id: int, item_type, is_group, chars):
-		self.dialog = dialog
-		self.is_group = is_group
-		self.item_id = item_id
-		self.item_type = item_type
-		self.chars = chars
-
-
-class TextField(Item):
-
-	def __init__(self, dialog: Dialog, item_id: int, item_type, is_group, chars):
-		super().__init__(dialog, item_id, item_type, is_group, chars)
-		self.default_value = ""
-		self.is_editable = True
-
-	def set_default_value(self, default_value):
-		self.default_value = default_value
-
-	def run(self):
-		vs.CreateEditText(self.dialog.dialog_id, self.item_id, self.default_value, self.chars)
-
-	def change_editable(self):
-		if self.is_editable:
-			self.is_editable = False
-			vs.SetTextEditable(self.item_id, False)
-		else:
-			self.is_editable = True
-			vs.SetTextEditable(self.item_id, True)
-
-
-class PullDownMenu(Item):
-
-	def __init__(self, dialog: Dialog, item_id: int, item_type, is_group, chars):
-		super().__init__(dialog, item_id, item_type, is_group, chars)
-		self.choices = None
-
-	def run(self):
-		vs.CreatePullDownMenu(self.dialog.dialog_id, self.item_id, self.chars)
-
-	def add_choices(self, choices: dict):
-		self.choices = choices
-
-	def return_choices(self):
-		for choice in self.choices.items():
-			return choice
-
-	def run_choices(self):
-		for item in self.choices.items():
-			vs.AddChoice(self.dialog.dialog_id, self.item_id, item[1], item[0])
