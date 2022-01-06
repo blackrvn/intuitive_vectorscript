@@ -7,11 +7,14 @@ class MultipleChoicesItems(Item):
 	def __init__(self, dialog, item_id: int, item_type, chars):
 		super().__init__(dialog, item_id, item_type, chars)
 		self.choices = None
+		self.has_listener = True
 
 	def add_choices(self, choices: dict):
 		self.choices = choices
 
 	def activation(self):
+		if self.has_listener:
+			vs.NotifyPullDownClicked(self.dialog.dialog_id, self.item_id)
 		for item in self.choices.items():
 			vs.AddChoice(self.dialog.dialog_id, self.item_id, item[1], item[0])
 

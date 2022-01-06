@@ -68,7 +68,9 @@ class Dialog:
 	def create_my_dialog(self):
 		for instance in self.control_ids.values():
 			instance.run()
-			instance.set_alignment()
 		self.set_dialog_order()
+		for instance in self.control_ids.values():
+			instance.set_alignment()
+			instance.bounding()
 		if vs.RunLayoutDialog(self.dialog_id, self.dialog_event_handler) == 1:
 			pass
